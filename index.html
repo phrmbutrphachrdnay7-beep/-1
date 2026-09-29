@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการการบ้าน & สิ่งที่ต้องทำ (To-Do List)</title>
+    <!-- เชื่อมโยงไฟล์ CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- ไอคอน Font Awesome สำหรับตกแต่ง -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header ส่วนหัวของเว็บไซต์ -->
+        <header>
+            <div class="header-title">
+                <h1><i class="fa-solid fa-heart"></i> My Homework & Tasks</h1>
+                <p>สมุดบันทึกการบ้านและรายการสิ่งที่ต้องทำ</p>
+            </div>
+            <!-- ปุ่มเปลี่ยนธีม สว่าง/มืด -->
+            <button id="themeToggleBtn" class="btn btn-secondary">
+                <i class="fa-solid fa-moon"></i> โหมดมืด
+            </button>
+        </header>
+
+        <!-- Dashboard หน้ารายงานสรุปข้อมูล -->
+        <section class="dashboard">
+            <div class="card stat-card">
+                <i class="fa-solid fa-list-check stat-icon"></i>
+                <div>
+                    <span class="stat-number" id="totalTasks">0</span>
+                    <span class="stat-label">งานทั้งหมด</span>
+                </div>
+            </div>
+            <div class="card stat-card">
+                <i class="fa-solid fa-clock stat-icon pending-icon"></i>
+                <div>
+                    <span class="stat-number" id="pendingTasks">0</span>
+                    <span class="stat-label">ยังไม่เสร็จ</span>
+                </div>
+            </div>
+            <div class="card stat-card">
+                <i class="fa-solid fa-circle-check stat-icon done-icon"></i>
+                <div>
+                    <span class="stat-number" id="completedTasks">0</span>
+                    <span class="stat-label">เสร็จสิ้นแล้ว</span>
+                </div>
+            </div>
+            <div class="card stat-card">
+                <i class="fa-solid fa-triangle-exclamation stat-icon urgent-icon"></i>
+                <div>
+                    <span class="stat-number" id="urgentTasks">0</span>
+                    <span class="stat-label">เร่งด่วน (ใกล้กำหนด)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- สรุปแยกตามรายวิชา -->
+        <div class="card subject-summary">
+            <h3><i class="fa-solid fa-book"></i> สรุปงานแยกตามรายวิชา</h3>
+            <div id="subjectBreakdown" class="subject-tags">
+                <!-- Javascript จะใส่ข้อมูลวิชาให้อัตโนมัติ -->
+            </div>
+        </div>
+
+        <!-- ฟอร์มสำหรับ เพิ่ม/แก้ไข รายการงาน -->
+        <section class="card form-section">
+            <h2 id="formTitle"><i class="fa-solid fa-plus-circle"></i> เพิ่มรายการงานใหม่</h2>
+            <form id="taskForm">
+                <!-- เก็บ id ของงานเมื่ออยู่ในโหมดแก้ไข -->
+                <input type="hidden" id="taskId">
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="taskTitle">ชื่องาน/การบ้าน <span class="required">*</span></label>
+                        <input type="text" id="taskTitle" placeholder="เช่น รายงานวิทยาศาสตร์" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskSubject">รายวิชา <span class="required">*</span></label>
+                        <input type="text" id="taskSubject" placeholder="เช่น วิทยาการคำนวณ" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDueDate">วันกำหนดส่ง <span class="required">*</span></label>
+                        <input type="date" id="taskDueDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskPriority">ระดับความสำคัญ</label>
+                        <select id="taskPriority">
+                            <option value="ต่ำ">ต่ำ</option>
+                            <option value="ปานกลาง" selected>ปานกลาง</option>
+                            <option value="สูง">สูง</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="saveTaskBtn" class="btn btn-primary">
+                        <i class="fa-solid fa-floppy-disk"></i> บันทึกงาน
+                    </button>
+                    <button type="button" id="cancelEditBtn" class="btn btn-secondary" style="display: none;">
+                        ยกเลิกการแก้ไข
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- เครื่องมือค้นหาและกรองข้อมูล (Filter & Search) -->
+        <section class="card filter-section">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="ค้นหาตามชื่องาน...">
+            </div>
+            
+            <div class="filter-group">
+                <select id="filterSubject">
+                    <option value="all">ทุกรายวิชา</option>
+                </select>
+                
+                <select id="filterStatus">
+                    <option value="all">ทุกสถานะ</option>
+                    <option value="ยังไม่ทำ">ยังไม่ทำ</option>
+                    <option value="กำลังทำ">กำลังทำ</option>
+                    <option value="เสร็จแล้ว">เสร็จแล้ว</option>
+                </select>
+
+                <select id="filterPriority">
+                    <option value="all">ทุกระดับความสำคัญ</option>
+                    <option value="สูง">สูง</option>
+                    <option value="ปานกลาง">ปานกลาง</option>
+                    <option value="ต่ำ">ต่ำ</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- ส่วนแสดงรายการงานทั้งหมด -->
+        <section class="task-list-section">
+            <div class="list-header">
+                <h2><i class="fa-solid fa-list-ul"></i> รายการงานทั้งหมด</h2>
+                <button id="clearCompletedBtn" class="btn btn-danger-outline">
+                    <i class="fa-solid fa-trash-can"></i> ลบงานที่เสร็จแล้วทั้งหมด
+                </button>
+            </div>
+
+            <!-- กล่องแสดงผลรายการงาน -->
+            <div id="taskList" class="task-grid">
+                <!-- JavaScript จะสร้างการ์ดงานขึ้นมาแสดงตรงนี้ -->
+            </div>
+        </section>
+    </div>
+
+    <!-- เชื่อมโยงไฟล์ JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
